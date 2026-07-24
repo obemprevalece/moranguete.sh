@@ -1,174 +1,100 @@
-#!/system/bin/sh
+#!/bin/bash
 
-# =========================================================
-# SYSTEM & GAME OPTIMIZER - TERMUX / ANDROID
-# =========================================================
-
-# Cores ANSI
-VERDE="\033[1;32m"
-RESET="\033[0m"
+# Cores (Tudo em Vermelho, exceto o Matrix que é Verde)
+vermelho="\033[31m"
+verde="\033[32m"
+original="\033[0m"
 
 clear
-echo -e "${VERDE}==========================================${RESET}"
-echo -e "${VERDE}         SISTEMA DE AUTENTICAÇÃO          ${RESET}"
-echo -e "${VERDE}==========================================${RESET}"
-echo ""
-read -p "Digite a chave de acesso (Key): " KEY_INPUT
 
-if [ "$KEY_INPUT" != "upredestined67" ]; then
-    echo ""
-    echo "[!] Chave incorreta! Acesso negado."
+# Validação de Key
+echo -e "${vermelho}======================================"
+echo -e "       AUTENTICAÇÃO NECESSÁRIA"
+echo -e "======================================${original}"
+read -p "Digite a Key de acesso: " senha
+
+if [ "$senha" != "1533" ]; then
+    echo -e "${vermelho}Key inválida! Acesso negado.${original}"
     exit 1
 fi
 
-echo ""
-echo -e "${VERDE}[✓] Chave confirmada com sucesso!${RESET}"
-sleep 1
+clear
 
-PKG_GAME=""
-GAME_NAME=""
-
-# Desenho ASCII Logo
-desenhar_logo() {
-cat << 'EOF'
-. .  .  . .  .  . .  .  . . . .:%8@8@;. . .  .  . .  .  . .  .  . .  .  .  
-   .       .       .       .   ..:@.; S8XS;X%%; .   .      .       .       .   .
-     .  .    .  .    .  .    .;8 tS@. ...S8S8@S%       . .    . .    .  .    .  
- .       .       .       . .;%S S@t....::.8.:t:X .. .       .     .      .      
-   .  .    .  .    .  .   .%S.;S%...t8 ::X:88SS t8@t:.....     .    . .    .  . 
-  .    .  .    .  .    . ..:S 8X :  ::;..t       .8X.8X:   . .   .      .   .   
-    .       .       .  ..;8@X..S:..8@%....  8  8 .   ;@ 8@: .      .  .   .    .
-  .   . .    .  .  . .:@.888...tX  :%...  .  8  8 ::8   .8 SS. ..       .    .  
-    .     .    .  . ;88 88::. . .... . . @88  8 .8 :.8 8     .@: . . .     .    
-  .    .   .    . .t; .t% : ..  ::@.  . : t88 ;8  8 ..8 .8 . :X@; .    .  .   . 
-     .   .   . ..:@  t; :.     .t.S..   .. @888888.8.8 :8 8.8 t ;X..    .   .   
-  .    .      ..;%::8@X:.  .  . X8. .    . 8888888888;;8 ::8 ;  8.8; .         .
-    .     . .  ;@;8..88  .   . .t;8..   .. X8 :;X. 8%8@ ;8  8.8  :@8...  . .  . 
-  .   .      ..88 .8  8S.. .  .. @8 . .  ..X8  ..  tS%8t. 8 .   8.8 8...     .  
-    .   . ....88 ..:8 ;X ;.       ;.    .;.8..  .t:8.:;8 8 :8 8 .  8t8...  .    
-  .        . % .;8 :88:@8:. . .:.X%.. . .X:..:.: .  :8..8 8   8 8 :. X::8t.   . 
-     . . . .:8;t8 8.%%::.:.    .;X..  .  ...:SX .;8:8.8.:::8 8 :.8t.X;X.%X; .   
-;X.  %8%:.. % .8.:888%.     .    .    ...t;@.  8:;:8 ::8 8.@8.%88 8:.8%X:8.    .
-@@;X@8X .;8%88.::8:.;. .  .    .  ....%.8   ;8.:8:8 ;8 ;% :  .tt .:%8t%:;    .  
-;8 t@;  .%88S:88 %:: .      .    .; ;    ;8 8 8 .8 8 t:S..... ..   888:SXt..    
-.X;SX8S....8S%;;;..   . ..   ... ;%X  ;;8 .8.::8 :;X %S8;...     ..8X@8@S.t8. . 
-SS%SSX@.  .. .. .  . . . tt. .t:8   :8.8 8..8:;: %;:.8@8.. . .... .; 8.S8S% S   
-tX:t%8.X..       . .. %%;8. ;    8.8 .:.::8 :8XX. . S8%: .%:8.S..@ :8%;X%;;X:  .
- ;X 8@8t8:. .... ...%8SX8@S8  .8.::.8 8.8 ;X 8;.:. .8StSt:.t8@8%;@8:%8  XSt..   
-  :X;;; :X;: @...888% 8XXt  8 ::8.8 :::;X.%.;:  .   .:@S ...@ ;8:   X8S%8:      
-  ..%Xt.;8t..8  SS.8.:8:.8.. 8 8 .:8:8@X  :. .   .   ..  ..8 .8 8.8 : %8;  .  . 
-   .    ...:XX.8X8 .8 :8 ;8.8   8.8;;8;... .   .   .   ...%8.;:::8 :@ ;:..      
- .   .    .. S    8 .8.:8..8  8 8S88@;.  .  .    .   . ..@8 .8.8 .8.  S     .   
-   .   .   . .S..8 :8 ;8 8..8;@@8@ 8:   S88@. .   . ...:   :8 ..8 ;; 8 . .    . 
-     .   .  . :@  .8 ;8 .:8 88@t8@ :.:. t@8% .  . . : %8  8..8:: 8X;S:.    .    
- .     .     . tX .:8..8 ::;S8S:t..  ...  . .  .. ..@   :8 8..8.;S8t; . .    .  
-   . .    .    .;8t;:8  8 8 8 t8888:. . .. . .. S8S    8 ::.8  @ S8:  .   .     
-  .     .    .  ..S8@    8 :.8     8S:8X;;;%88S8 . .8 :.8.8   8 @8:.    .   .  .
-     .    .     .. @%  8  8.8 ;8 .        .     :;8 .8.:...:8%X X..  .          
-  .    .     .    . ;S8t8.:8 t8 :8  8  8 8 8 :8.8 .;8 8 8 % @ @:.     .  .  .   
-    .    . .   .   ...:8X%8 :8.8  8  8  ..8 ;8 ..8  :: ;@ @ 8;.   . .     .   . 
-  .   .          .    ..t8S: .8  ..8  8 8  8 .8   8.@@   .8:...       .         
-    .   .  . .          .:.;%SX%: @88.8  8 :8 8@XS   .88; ...   . .    .  . .   
-  .            .  . .  .   .  ..%X@8@8%8@%%@:@%%888S:.:.     .      .         . 
-EOF
+# Função para exibir o menu limpo (Tudo em Vermelho)
+mostrar_menu() {
+    clear
+    echo -e "${vermelho}======================================${original}"
+    echo -e "${vermelho}           PAINEL DE CONTROLE         ${original}"
+    echo -e "${vermelho}======================================${original}"
+    echo -e "${vermelho} [1] Calibrar Mira & Otimizar Full    ${original}"
+    echo -e "${vermelho} [2] Sair                             ${original}"
+    echo -e "${vermelho}======================================${original}"
+    echo -n "Input: "
 }
 
-# Animação Matrix por 5 segundos
+# Escolha do Free Fire
+escolher_ff() {
+    clear
+    echo -e "${vermelho}Escolha a versão do Free Fire:${original}"
+    echo -e "${vermelho}[1] Free Fire Normal (com.dts.freefireth)${original}"
+    echo -e "${vermelho}[2] Free Fire MAX (com.dts.freefiremax)${original}"
+    read -p "Opção: " tipo_ff
+
+    if [ "$tipo_ff" == "1" ]; then
+        pacote="com.dts.freefireth"
+    else
+        pacote="com.dts.freefiremax"
+    fi
+}
+
+# Efeito Matrix por 5 segundos (Mantido em VERDE conforme pedido)
 efeito_matrix() {
     clear
-    echo -e "${VERDE}"
-    local tempo_final=$((SECONDS + 5))
-    while [ $SECONDS -lt $tempo_final ]; do
-        printf "%-80s\n" "$(tr -dc 'a-zA-Z0-9!@#$%^&*()' < /dev/urandom | head -c 60)"
-        sleep 0.05
+    echo -e "${verde}"
+    fim=$((SECONDS+5))
+    while [ $SECONDS -lt $fim ]; do
+        echo "01011001 11010011 00110101 11101000 10101101 01100101"
+        echo "10010110 01101101 11010010 00101101 11011100 00101011"
+        echo "11100101 00110111 10101011 01101101 00011101 11010010"
+        sleep 0.2
     done
-    echo -e "${RESET}"
+    echo -e "${original}"
 }
 
-menu_jogo() {
+executar_funcao1() {
+    escolher_ff
     clear
-    echo -e "${VERDE}"
-    desenhar_logo
-    echo -e "${RESET}"
-    echo "  [1] Free Fire Normal"
-    echo "  [2] Free Fire Max"
-    echo "  [3] Sair"
-    echo ""
-    read -p "Escolha o jogo: " OPCAO_JOGO
-
-    case $OPCAO_JOGO in
-        1)
-            PKG_GAME="com.dts.freefireth"
-            GAME_NAME="Free Fire Normal"
-            ;;
-        2)
-            PKG_GAME="com.dts.freefiremax"
-            GAME_NAME="Free Fire Max"
-            ;;
-        3)
-            echo "Saindo..."
-            exit 0
-            ;;
-        *)
-            echo "Opção inválida!"
-            sleep 1
-            menu_jogo
-            ;;
-    esac
-}
-
-menu_jogo
-
-# Otimização Completa de Mira e Desempenho
-executar_otimizacao_full() {
-    # 1. Animação Matrix de 5 segundos
+    echo -e "${vermelho}[+] Calibrando mira e aplicando otimização FULL...${original}"
+    
+    # Otimizações seguras de toque e sensibilidade para evitar tremores (sem alterar DPI nem danificar o hardware)
+    settings put system pointer_speed 0 2>/dev/null
+    settings put system touch_exploration_enabled 0 2>/dev/null
+    
+    # Inicia o efeito Matrix de 5 segundos (Verde)
     efeito_matrix
-
-    # 2. Execução das configurações
-    settings put system pointer_speed 3 > /dev/null 2>&1
-    settings put secure long_press_timeout 250 > /dev/null 2>&1
-    settings put secure multi_press_timeout 200 > /dev/null 2>&1
-
-    settings put global window_animation_scale 0.5 > /dev/null 2>&1
-    settings put global transition_animation_scale 0.5 > /dev/null 2>&1
-    settings put global animator_duration_scale 0.5 > /dev/null 2>&1
-    settings put global force_gpu_rendering 1 > /dev/null 2>&1
-
-    pm trim-caches 999G > /dev/null 2>&1
-    if [ -n "$PKG_GAME" ]; then
-        pm trim-caches 999G $PKG_GAME > /dev/null 2>&1
-    fi
-
-    # 3. Mensagem Final e Abertura do Jogo
-    echo -e "${VERDE}[✓] Injetado, abrindo $GAME_NAME...${RESET}"
+    
+    echo -e "${vermelho}Injetado, abrindo free fire...${original}"
     sleep 2
-
-    if [ -n "$PKG_GAME" ]; then
-        monkey -p $PKG_GAME -c android.intent.category.LAUNCHER 1 > /dev/null 2>&1 || am start -n $PKG_GAME/com.epicgames.ue4.SplashActivity > /dev/null 2>&1
-    fi
-    exit 0
+    
+    # Comando para abrir o Free Fire automaticamente de forma segura
+    am start -n $pacote/com.dts.freefireth.SplashActivity 2>/dev/null || am start --user 0 -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -p $pacote 2>/dev/null
 }
 
+# Loop Principal
 while true; do
-    clear
-    echo -e "${VERDE}"
-    desenhar_logo
-    echo -e "${RESET}"
-    echo "  [1] Calibrar Mira e Otimizar $GAME_NAME"
-    echo "  [2] Sair"
-    echo ""
-    read -p "Input: " OPCAO_MENU
-
-    case $OPCAO_MENU in
+    mostrar_menu
+    read opcao
+    case $opcao in
         1)
-            executar_otimizacao_full
+            executar_funcao1
+            read -p "Pressione Enter para voltar ao menu..."
             ;;
         2)
-            echo "Saindo do script..."
+            echo -e "${vermelho}Saindo...${original}"
             exit 0
             ;;
         *)
-            echo "Opção inválida!"
+            echo -e "${vermelho}Opção inválida!${original}"
             sleep 1
             ;;
     esac
