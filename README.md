@@ -1,13 +1,17 @@
 #!/system/bin/sh
 
 # =========================================================
-# SYSTEM & GAME OPTIMIZER - TERMUX
+# SYSTEM & GAME OPTIMIZER - TERMUX / ANDROID
 # =========================================================
 
+# Cores ANSI
+VERDE="\033[1;32m"
+RESET="\033[0m"
+
 clear
-echo "=========================================="
-echo "         SISTEMA DE AUTENTICAÇÃO          "
-echo "=========================================="
+echo -e "${VERDE}==========================================${RESET}"
+echo -e "${VERDE}         SISTEMA DE AUTENTICAÇÃO          ${RESET}"
+echo -e "${VERDE}==========================================${RESET}"
 echo ""
 read -p "Digite a chave de acesso (Key): " KEY_INPUT
 
@@ -18,89 +22,13 @@ if [ "$KEY_INPUT" != "upredestined67" ]; then
 fi
 
 echo ""
-echo "[✓] Chave confirmada com sucesso!"
+echo -e "${VERDE}[✓] Chave confirmada com sucesso!${RESET}"
 sleep 1
 
 PKG_GAME=""
 GAME_NAME=""
 
-menu_jogo() {
-    clear
-    echo "=========================================="
-    echo "              ESCOLHER JOGO               "
-    echo "=========================================="
-    echo ""
-    echo "  [1] Free Fire Normal"
-    echo "  [2] Free Fire Max"
-    echo "  [3] Sair"
-    echo ""
-    read -p "Escolha o jogo: " OPCAO_JOGO
-
-    case $OPCAO_JOGO in
-        1)
-            PKG_GAME="com.dts.freefireth"
-            GAME_NAME="Free Fire Normal"
-            ;;
-        2)
-            PKG_GAME="com.dts.freefiremax"
-            GAME_NAME="Free Fire Max"
-            ;;
-        3)
-            echo "Saindo..."
-            exit 0
-            ;;
-        *)
-            echo "Opção inválida!"
-            sleep 1
-            menu_jogo
-            ;;
-    esac
-}
-
-menu_jogo
-
-# Função de Otimização Completa + Mira Pesada / Estável
-executar_otimizacao_full() {
-    clear
-    echo "=========================================="
-    echo "   OTIMIZAÇÃO FULL & MIRA - $GAME_NAME"
-    echo "=========================================="
-    echo ""
-    echo "🔄 Adjustando estabilidade e precisão do toque (Mira Pesada)..."
-    
-    # Reduz a aceleração brusca do ponteiro para deixar a mira firme/pesada
-    settings put system pointer_speed 3 > /dev/null 2>&1
-
-    # Otimiza o tempo de resposta do toque (Touch Sampling)
-    settings put secure long_press_timeout 250 > /dev/null 2>&1
-    settings put secure multi_press_timeout 200 > /dev/null 2>&1
-
-    echo "🔄 Otimizando transições de GPU e sistema..."
-    
-    # Reduz atraso visual de quadros
-    settings put global window_animation_scale 0.5 > /dev/null 2>&1
-    settings put global transition_animation_scale 0.5 > /dev/null 2>&1
-    settings put global animator_duration_scale 0.5 > /dev/null 2>&1
-    settings put global force_gpu_rendering 1 > /dev/null 2>&1
-
-    echo "🔄 Executando limpeza completa do sistema e cache..."
-    
-    # Limpeza profunda de caches
-    pm trim-caches 999G > /dev/null 2>&1
-
-    if [ -n "$PKG_GAME" ]; then
-        pm trim-caches 999G $PKG_GAME > /dev/null 2>&1
-    fi
-
-    echo ""
-    echo "=========================================="
-    echo "[✓] PROCESSO CONCLUÍDO COM SUCESSO!"
-    echo "=========================================="
-    echo ""
-    read -p "Pressione ENTER para voltar ao menu..."
-}
-
-# Desenho ASCII Matrix (Ghostbusters)
+# Desenho ASCII Logo
 desenhar_logo() {
 cat << 'EOF'
 . .  .  . .  .  . .  .  . . . .:%8@8@;. . .  .  . .  .  . .  .  . .  .  .  
@@ -145,18 +73,91 @@ tX:t%8.X..       . .. %%;8. ;    8.8 .:.::8 :8XX. . S8%: .%:8.S..@ :8%;X%;;X:  .
 EOF
 }
 
+# Animação Matrix por 5 segundos
+efeito_matrix() {
+    clear
+    echo -e "${VERDE}"
+    local tempo_final=$((SECONDS + 5))
+    while [ $SECONDS -lt $tempo_final ]; do
+        printf "%-80s\n" "$(tr -dc 'a-zA-Z0-9!@#$%^&*()' < /dev/urandom | head -c 60)"
+        sleep 0.05
+    done
+    echo -e "${RESET}"
+}
+
+menu_jogo() {
+    clear
+    echo -e "${VERDE}"
+    desenhar_logo
+    echo -e "${RESET}"
+    echo "  [1] Free Fire Normal"
+    echo "  [2] Free Fire Max"
+    echo "  [3] Sair"
+    echo ""
+    read -p "Escolha o jogo: " OPCAO_JOGO
+
+    case $OPCAO_JOGO in
+        1)
+            PKG_GAME="com.dts.freefireth"
+            GAME_NAME="Free Fire Normal"
+            ;;
+        2)
+            PKG_GAME="com.dts.freefiremax"
+            GAME_NAME="Free Fire Max"
+            ;;
+        3)
+            echo "Saindo..."
+            exit 0
+            ;;
+        *)
+            echo "Opção inválida!"
+            sleep 1
+            menu_jogo
+            ;;
+    esac
+}
+
+menu_jogo
+
+# Otimização Completa de Mira e Desempenho
+executar_otimizacao_full() {
+    # 1. Animação Matrix de 5 segundos
+    efeito_matrix
+
+    # 2. Execução das configurações
+    settings put system pointer_speed 3 > /dev/null 2>&1
+    settings put secure long_press_timeout 250 > /dev/null 2>&1
+    settings put secure multi_press_timeout 200 > /dev/null 2>&1
+
+    settings put global window_animation_scale 0.5 > /dev/null 2>&1
+    settings put global transition_animation_scale 0.5 > /dev/null 2>&1
+    settings put global animator_duration_scale 0.5 > /dev/null 2>&1
+    settings put global force_gpu_rendering 1 > /dev/null 2>&1
+
+    pm trim-caches 999G > /dev/null 2>&1
+    if [ -n "$PKG_GAME" ]; then
+        pm trim-caches 999G $PKG_GAME > /dev/null 2>&1
+    fi
+
+    # 3. Mensagem Final e Abertura do Jogo
+    echo -e "${VERDE}[✓] Injetado, abrindo $GAME_NAME...${RESET}"
+    sleep 2
+
+    if [ -n "$PKG_GAME" ]; then
+        monkey -p $PKG_GAME -c android.intent.category.LAUNCHER 1 > /dev/null 2>&1 || am start -n $PKG_GAME/com.epicgames.ue4.SplashActivity > /dev/null 2>&1
+    fi
+    exit 0
+}
+
 while true; do
     clear
-    echo "=========================================="
-    echo "     PAINEL DE FUNÇÕES - $GAME_NAME      "
-    echo "=========================================="
-    echo ""
-    echo "  [1] Otimização Full"
+    echo -e "${VERDE}"
+    desenhar_logo
+    echo -e "${RESET}"
+    echo "  [1] Calibrar Mira e Otimizar $GAME_NAME"
     echo "  [2] Sair"
     echo ""
-    desenhar_logo
-    echo ""
-    read -p "Escolha uma opção: " OPCAO_MENU
+    read -p "Input: " OPCAO_MENU
 
     case $OPCAO_MENU in
         1)
